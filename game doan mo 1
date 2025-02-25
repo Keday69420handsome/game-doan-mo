@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trốn Tìm với Bot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 50px;
+        }
+
+        #game-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: auto;
+        }
+
+        input {
+            padding: 10px;
+            width: 80%;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        #message {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        #difficulty {
+            background-color: #007bff;
+        }
+
+        #difficulty:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <h2>🔍 Trốn Tìm với Bot</h2>
+        <p>Hãy đoán xem bot đang trốn ở đâu (<span id="range">1-100</span>)!</p>
+        <input type="number" id="guess" min="1" max="100" placeholder="Nhập số...">
+        <button onclick="checkGuess()">Đoán</button>
+        <button id="difficulty" onclick="increaseDifficulty()">Tăng độ khó</button>
+        <p id="message"></p>
+    </div>
+    <script>
+        let maxRange = 100;
+        let botLocation = Math.floor(Math.random() * maxRange) + 1;
+        let attempts = 0;
+        let gameOver = false;
+
+        function checkGuess() {
+            if (gameOver) return;
+
+            let guessInput = document.getElementById("guess");
+            let message = document.getElementById("message");
+            let guess = parseInt(guessInput.value);
+            attempts++;
+
+            if (isNaN(guess) || guess < 1 || guess > maxRange) {
+                message.innerHTML = `🚫 Vui lòng nhập số trong khoảng 1-${maxRange}!`;
+                return;
+            }
+
+            if (guess < botLocation) {
+                message.innerHTML = "📈 Bot đang ở vị trí cao hơn!";
+            } else if (guess > botLocation) {
+                message.innerHTML = "📉 Bot đang ở vị trí thấp hơn!";
+            } else {
+                message.innerHTML = `🎉 Chúc mừng! Bạn đã tìm thấy bot sau ${attempts} lần đoán! Trò chơi sẽ tự động bắt đầu lại...`;
+                gameOver = true;
+                setTimeout(resetGame, 3000);
+                return;
+            }
+
+            guessInput.value = "";
+        }
+
+        function resetGame() {
+            botLocation = Math.floor(Math.random() * maxRange) + 1;
+            attempts = 0;
+            gameOver = false;
+            document.getElementById("message").innerHTML = "";
+            document.getElementById("guess").value = "";
+        }
+
+        function increaseDifficulty() {
+            maxRange = 10000;
+            document.getElementById("range").innerText = "1-10000";
+            document.getElementById("guess").max = 10000;
+            resetGame();
+        }
+    </script>
+</body>
+</html>
